@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="res"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="libs/hosttestlib.jar"/>
+	<classpathentry kind="lib" path="libs/javalib-deviceinfo.jar"/>
+	<classpathentry kind="lib" path="libs/chimpchat-22.2.0.jar" sourcepath="/AndroidUiRcorder/libs/chimpchat-22.2.0-sources.jar"/>
+	<classpathentry kind="lib" path="libs/javalib-deviceutil.jar"/>
+	<classpathentry kind="lib" path="libs/imagedraw.jar"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/tradefederation"/>
+	<classpathentry kind="lib" path="libs/jline-0.9.9.jar"/>
+	<classpathentry kind="lib" path="libs/commons-compress-1.8.1.jar"/>
+	<classpathentry kind="lib" path="libs/gson-2.2.4.jar"/>
+	<classpathentry kind="lib" path="libs/guava-17.0.jar"/>
+	<classpathentry kind="lib" path="libs/ddmlib-22.0.jar"/>
+	<classpathentry kind="lib" path="libs/kxml2-2.3.0.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
