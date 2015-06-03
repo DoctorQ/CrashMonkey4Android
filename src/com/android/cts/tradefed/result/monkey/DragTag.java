@@ -37,6 +37,7 @@ public class DragTag extends EventTag {
 		serializer.attribute(CtsXmlResultReporter.ns, INDEX_ATTR, getIndex()
 				+ "");
 		serializer.attribute(CtsXmlResultReporter.ns, TYPE_ATTR, getType());
+		serializer.attribute(CtsXmlResultReporter.ns, TIME_ATTR, getTime());
 		serializer.attribute(CtsXmlResultReporter.ns, IMAGE_ATTR, getImage());
 		serializer.attribute(CtsXmlResultReporter.ns, LOG_ATTR, getLog());
 		serializer.attribute(CtsXmlResultReporter.ns, POS_ATTR, getPos() + "");

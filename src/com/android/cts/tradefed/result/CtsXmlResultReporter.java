@@ -70,6 +70,14 @@ import com.android.tradefed.util.StreamUtil;
  * Outputs xml in format governed by the cts_result.xsd
  */
 public class CtsXmlResultReporter implements ITestInvocationListener {
+	public File getmLogDir() {
+		return mLogDir;
+	}
+
+	public void setmLogDir(File mLogDir) {
+		this.mLogDir = mLogDir;
+	}
+
 	private static final String LOG_TAG = "CtsXmlResultReporter";
 
 	static final String TEST_RESULT_FILE_NAME = "testResult.xml";
@@ -270,6 +278,18 @@ public class CtsXmlResultReporter implements ITestInvocationListener {
 				mLogFile = logFile;
 				if (logFile != null && mEventTag != null)
 					mEventTag.setLog(mLogFile.getPath());
+			} else if (dataName.startsWith("monkey")
+					&& dataType == LogDataType.TEXT) {
+				monkeyTag.setFinalLog(logFile.getPath());
+				CrashAnalyzer crashAnalyzer = new CrashAnalyzer(logFile);
+				crashAnalyzer.parserLogcat();
+				if (crashAnalyzer.hasCrash()) {
+					mResults.setHasCrash("YES");
+					mResults.setCrashFile(crashAnalyzer.getmCrashFile()
+							.getAbsolutePath());
+					mResults.setResult(crashAnalyzer.getCrashCount() + " Crash.");
+				}
+				//monkeyTag.setResult(crashAnalyzer.getCrashCount() + " Crash");
 			}
 			if (TestInvocation.DEVICE_LOG_NAME.equals(dataName)) {
 				mLogPath = logFile.getAbsolutePath();
@@ -460,6 +480,8 @@ public class CtsXmlResultReporter implements ITestInvocationListener {
 	private void createXmlResult(File reportFile, String startTimestamp,
 			long elapsedTime) {
 		String endTime = getTimestamp();
+		// 设置Monkey执行时间
+		mResults.setDuration(TimeUtil.formatElapsedTime(elapsedTime));
 		OutputStream stream = null;
 		try {
 			stream = createOutputResultStream(reportFile);
@@ -471,7 +493,7 @@ public class CtsXmlResultReporter implements ITestInvocationListener {
 					true);
 			serializer
 					.processingInstruction("xml-stylesheet type=\"text/xsl\"  "
-							+ "href=\"cts_result.xsl\"");
+							+ "href=\"result.xsl\"");
 			serializeResultsDoc(serializer, startTimestamp, endTime);
 			serializer.endDocument();
 			String msg = String.format(
@@ -618,6 +640,7 @@ public class CtsXmlResultReporter implements ITestInvocationListener {
 			MonkeyKeyEvent key = (MonkeyKeyEvent) event;
 			KeyTag keyTag = new KeyTag();
 			keyTag.setValue(key.getKeyCode());
+			
 			mEventTag = keyTag;
 			break;
 		case 1:
@@ -648,9 +671,10 @@ public class CtsXmlResultReporter implements ITestInvocationListener {
 		}
 		if (mPngFile != null)
 			mEventTag.setImage(mPngFile.getPath());
-
+		mEventTag.setTime(getTimestamp());
 		monkeyTag.addEvent(mEventTag);
 
 	}
+	
 
 }

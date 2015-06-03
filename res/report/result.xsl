@@ -29,33 +29,58 @@
 
 					<!-- img { position: relative; display: inline; } -->
 				</STYLE>
-				<script type="text/javascript"
-					src="/Users/wuxian/Downloads/android-cts/repository/results/2015.05.26_17.23.41/result/result_view.js">
 
-				</script>
 			</head>
 			<body>
 				<div class="container theme-showcase" role="main">
 					<div class="jumbotron">
+
 						<center>
-							<div class="alert alert-success" role="alert">
+							
+							<xsl:choose>
+							  <xsl:when test="TestResult/Summary/@crash = 'YES'">
+							    <div class="alert alert-danger" role="alert">
+							      <h1>
+							        <strong>Crash!</strong>
+							          Application crashed during the monkey testing.
+							      </h1>
+							    </div>
+							  </xsl:when>
+							  <xsl:otherwise>
+							    <div class="alert alert-success" role="alert">
 								<h1>
 									<strong>Well done!</strong>
 									None crash happend.
 								</h1>
 							</div>
+							  </xsl:otherwise>
+							</xsl:choose>
 						</center>
-
 						<p>
 							<center>
 								<a class="btn btn-lg btn-info" role="button" style="font-size: 20px">
 									<xsl:attribute name="href">
                                         <xsl:value-of
-										select="TestResult/@log" />
+										select="TestResult/MonkeyTest/@log" />
                                 </xsl:attribute>
 									system log
 								</a>
+								<a class="btn btn-lg btn-primary" href="trace.html" role="button" style="font-size: 20px">
+									uiauto trace
+								</a>
+
+								<xsl:if test="TestResult/Summary/@crash = 'YES'">
+								
+								<a class="btn btn-lg btn-danger" role="button" style="font-size: 20px">
+									<xsl:attribute name="href">
+                                        <xsl:value-of
+										select="TestResult/Summary/@path" />
+                                </xsl:attribute>
+									crash log
+								</a>
+								</xsl:if>
 							</center>
+							
 						</p>
 					</div>
 				</div>
@@ -65,14 +90,18 @@
 						<xsl:sort select="@index" data-type="number" />
 						<xsl:if test="@pos &lt; 49">
 							<!-- <xsl:value-of select="@pos"/> -->
-
-							<img width="240" style="border: 1px white solid">
-								<xsl:attribute name="src">
+							<a>
+								<xsl:attribute name="href">
                                         <xsl:value-of
-									select="@image" />
+									select="@log" />
                                 </xsl:attribute>
-							</img>
-
+								<img width="240" style="border: 1px white solid">
+									<xsl:attribute name="src">
+                                        <xsl:value-of
+										select="@image" />
+                                </xsl:attribute>
+								</img>
+							</a>
 						</xsl:if>
 					</xsl:for-each> <!-- end test -->
 					<img width="240" style="border: 1px white solid">

@@ -18,6 +18,8 @@ import com.android.tradefed.config.Option;
 import com.android.tradefed.config.Option.Importance;
 import com.android.tradefed.device.DeviceNotAvailableException;
 import com.android.tradefed.device.ITestDevice;
+import com.android.tradefed.device.LogcatReceiver;
+import com.android.tradefed.device.MonkeyLogcatReceiver;
 import com.android.tradefed.device.TestDeviceOptions;
 import com.android.tradefed.log.LogUtil.CLog;
 import com.android.tradefed.result.ITestInvocationListener;
@@ -35,6 +37,7 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 
 	public static final String RUNNINT_SCREENSHOT = "screenshot";
 	public static final String FINAL_SCREENSHOT = "final";
+	private static final String MONKEY_LOG_NAME = "monkey";
 
 	@Option(name = "p", description = "指定的包名，如果没有指定，就从手机的当前界面开始")
 	private String mPackage = "";
@@ -57,7 +60,7 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 	private float mDrag = 0.0f;
 	@Option(name = "logcat-size", description = "The max number of logcat data in bytes to capture when --logcat-on-failure is on. "
 			+ "Should be an amount that can comfortably fit in memory.")
-	private int mMaxLogcatBytes = 20 * 1024; // 500K
+	private int mMaxLogcatBytes = 20 * 1024; // 20K
 
 	@Option(name = "plan", description = "the test plan to run.", importance = Importance.IF_UNSET)
 	private String mPlanName = null;
@@ -84,6 +87,16 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 	@Option(name = "skip-uninstall-app", description = "wifi密码")
 	private boolean mSkipUninstallApp = false;
 
+	@Option(name = "monkey-log-size", description = "应用log的大小")
+	private long mMonkeyLogSize = 10 * 1024 * 1024;
+	@Option(name = "bugreport", shortName = 'b', description = "take a bugreport after each failed test. "
+			+ "Warning: can potentially use a lot of disk space.")
+	private boolean mBugreport = false;
+
+	@Option(name = "tracefile", description = "take a bugreport after each failed test. "
+			+ "Warning: can potentially use a lot of disk space.")
+	private boolean mTrace = false;
+
 	private ITestDevice mDevice = null;
 	private AdbChimpDevice mACDevice = null;
 	private ITestInvocationListener mListener = null;
@@ -91,6 +104,7 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 
 	private CtsBuildHelper mCtsBuild = null;
 	private IBuildInfo mBuildInfo = null;
+	private MonkeyLogcatReceiver mLogcatReceiver;
 
 	private MonkeyActivityListener monkeyActivityListener;
 
@@ -128,11 +142,45 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 		CLog.i(String.format("Monkey Test for device %s", getDevice()
 				.getSerialNumber()));
 		mListener = listener;
+		beforeTest(listener);
+
+		float[] mFactors = parseFactors();
+		try {
+			Monkey monkey = new Monkey(mPackage, getChimpDevice(), mFactors);
+			for (int i = 0; i < mInjectEvents; i++) {
+				saveScreenshot(RUNNINT_SCREENSHOT);
+				monkey.nextRandomEvent(ctsXmlResultReporter);
+				saveLogcat();
+				Thread.sleep(mThrottle);
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} finally {
+			exitAdbChimpDevice();
+		}
+		afterTest();
+	}
+
+	// 测试后的清楚操作
+	private void afterTest() throws DeviceNotAvailableException {
+		// 保存最后的现场截图
+		saveScreenshot(FINAL_SCREENSHOT);
+		// 卸载应用
+		destoryListener();
+		// 卸载应用
+		uninstallPackage();
+		// 获取bugreport信息
+		getBugreport();
+		getTraceFile();
+	}
+
+	// 测试前的准备工作
+	private void beforeTest(ITestInvocationListener listener)
+			throws DeviceNotAvailableException {
 		check();
 		if (reboot) {
 			rebootDevice();
 		}
-
 		collectDeviceInfo(getDevice(), mCtsBuild, listener);
 		// 屏幕解锁
 		unlockDevice(getDevice(), mCtsBuild);
@@ -142,27 +190,7 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 		// 启动应用
 		launchApp();
 		parseCtsXmlResultReporter();
-		float[] mFactors = parseFactors();
-
 		initListener();
-		try {
-			Monkey monkey = new Monkey(mPackage, getChimpDevice(), mFactors);
-			for (int i = 0; i < mInjectEvents; i++) {
-				saveScreenshot(RUNNINT_SCREENSHOT);
-				monkey.nextRandomEvent(ctsXmlResultReporter);
-				// saveLogcat();
-				Thread.sleep(mThrottle);
-			}
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} finally {
-			exitAdbChimpDevice();
-		}
-		// 保存最后的现场截图
-		saveScreenshot(FINAL_SCREENSHOT);
-		// 卸载应用
-		uninstallPackage();
-		destoryListener();
 	}
 
 	private void destoryListener() {
@@ -217,6 +245,17 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 
 	}
 
+	// 得到data/anr/trace.txt文件
+	private void getTraceFile() throws DeviceNotAvailableException {
+		if (!mTrace)
+			return;
+		String remotePath = "/data/anr/trace.txt";
+		if (!getDevice().doesFileExist(remotePath))
+			return;
+		File localFile = ctsXmlResultReporter.getmLogDir();
+		getDevice().pullFile(remotePath, localFile);
+	}
+
 	// 安装应用
 	private void installPackage() throws DeviceNotAvailableException {
 		if (mAppPath == null)
@@ -229,11 +268,20 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 
 	// 卸载应用,如果没有指定-p参数，说明不指定应用，那么就无需启动
 	private void uninstallPackage() throws DeviceNotAvailableException {
-		if (mAppPath == null && !mSkipUninstallApp)
+		if (mAppPath == null)
 			return;
-		CLog.i("Attempting to uninstall %s on %s  ", mPackage, getDevice()
-				.getSerialNumber());
-		getDevice().uninstallPackage(mPackage);
+		if (!mSkipUninstallApp) {
+			CLog.i("Attempting to uninstall %s on %s  ", mPackage, getDevice()
+					.getSerialNumber());
+			getDevice().uninstallPackage(mPackage);
+		}
+		// 关闭Monkey的log抓取器
+		InputStreamSource logcatSource = mLogcatReceiver.getLogcatData();
+		if (logcatSource != null) {
+			mListener.testLog(MONKEY_LOG_NAME, LogDataType.TEXT, logcatSource);
+			logcatSource.cancel();
+		}
+		stopLogcat();
 
 	}
 
@@ -241,12 +289,21 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 	private void launchApp() throws DeviceNotAvailableException {
 		if (mPackage == null || mActivity == null)
 			return;
-		String cmd = "am start -W " + mPackage + "/" + mActivity;
+		String cmd = "am start " + mPackage + "/" + mActivity;
 		CLog.i("Attempting to launch %s on %s using command [%s] ", mPackage,
 				getDevice().getSerialNumber(), cmd);
 		String result = getDevice().executeShellCommand(cmd);
 		if (result.contains("does not exist") || result.contains("Error")) {
 			throw new IllegalArgumentException(String.format("%s", result));
+		}
+		// 启动Monkey log抓取器
+		startLogcat();
+
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}
@@ -284,10 +341,23 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 
 	}
 
+	private void getBugreport() {
+		if (!mBugreport)
+			return;
+		InputStreamSource bugSource = mDevice.getBugreport();
+		mListener.testLog(String.format("bug"), LogDataType.TEXT, bugSource);
+		bugSource.cancel();
+	}
+
 	// 保存日志
 	private void saveLogcat() {
 		RunUtil.getDefault().sleep(10);
-		InputStreamSource logSource = mDevice.getLogcat(mMaxLogcatBytes);
+		InputStreamSource logSource = null;
+		if (mLogcatReceiver == null) {
+			logSource = mDevice.getLogcat(mMaxLogcatBytes);
+		} else {
+			logSource = mLogcatReceiver.getLogcatData(mMaxLogcatBytes);
+		}
 		mListener.testLog(
 				String.format("logcat-%s", TimeUtil.getTimestampForFile()),
 				LogDataType.TEXT, logSource);
@@ -314,6 +384,31 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 	public boolean isResumable() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	MonkeyLogcatReceiver createMonkeyLogcatReceiver() {
+		return new MonkeyLogcatReceiver(getDevice(), mMonkeyLogSize, 3 * 1000,
+				mPackage);
+	}
+
+	private void startLogcat() {
+		if (mLogcatReceiver != null) {
+			CLog.d("Already capturing monkey logcat for %s, ignoring",
+					getDevice().getSerialNumber());
+			return;
+		}
+		mLogcatReceiver = createMonkeyLogcatReceiver();
+		mLogcatReceiver.start();
+	}
+
+	public void stopLogcat() {
+		if (mLogcatReceiver != null) {
+			mLogcatReceiver.stop();
+			mLogcatReceiver = null;
+		} else {
+			CLog.w("Attempting to stop logcat when not capturing for %s",
+					getDevice().getSerialNumber());
+		}
 	}
 
 	@Override

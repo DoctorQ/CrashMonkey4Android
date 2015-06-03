@@ -17,7 +17,7 @@
 
 		<html>
 			<head>
-				<title>Monkey Test Summary</title>
+				<title>Monkey Trace</title>
 				<script>
 					function toggle(id) {
 					e = document.getElementById(id)
@@ -29,78 +29,50 @@
 				</STYLE>
 			</head>
 			<body>
-				<div class="container">
-					<div class="row">
-						<div class="span9 offset1">
-							<h1>Summary</h1>
-							<div>
-								<ul>
-									<li>
-										Hardware:
-										<xsl:value-of select="TestResult/DeviceInfo/BuildInfo/@build_model" />
-									</li>
-									<li>
-										Application:
-										<xsl:value-of select="TestResult/MonkeyTest/@application" />
-									</li>
-									<li>
-										Span:
-										<xsl:value-of select="TestResult/@starttime" />~<xsl:value-of select="TestResult/@endtime" />
-									</li>
-									<li>
-										Results:
-										<xsl:value-of select="TestResult/Summary/@result" />
-									</li>
-								</ul>
-							</div>
+				<h1>Monkey Trace</h1>
+					<table class="table table-bordered">
+						<tbody>
+							<tr>
+								<th>Timestamp</th>
+								<th>Sequence</th>
+								<th>Type</th>
+								<th>Message</th>
+							</tr>
+							<xsl:for-each select="TestResult/MonkeyTest/Event">
+								<xsl:sort select="@index" data-type="number" />
+								<tr>
+								<td>
+									<span style="display:inline-block;white-space:nowrap;"><xsl:value-of
+									select="@time" /></span></td>
+								<td>
+									<span style="display:inline-block;white-space:nowrap;"><xsl:value-of
+									select="@index" /></span>
+								</td>
+								<td>
+									<span style="display:inline-block;white-space:nowrap;"><span style="color:black"><xsl:value-of
+									select="@type" /></span></span></td>
+								<td>
 
-							<h1>Details</h1>
-							<table class="table table-bordered">
-								<thead>
-									<tr>
-										<th>No</th>
-										<th>Result</th>
-										<th>Duration</th>
-										<th>Event Count</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<xsl:attribute name="class">
-                                        		<xsl:choose>
-												  <xsl:when test="TestResult/Summary/@crash = 'YES'">
-												   	 error
-												  </xsl:when>
-												  <xsl:otherwise>
-												    success
-												  </xsl:otherwise>
-												</xsl:choose>
-                                		</xsl:attribute>
-										<td>1</td>
-										<td>
-											<a href="result.html">
-												<xsl:choose>
-												  <xsl:when test="TestResult/Summary/@crash = 'YES'">
-												   	 <span>Crash</span>
-												  </xsl:when>
-												  <xsl:otherwise>
-												    <span>OK</span>
-												  </xsl:otherwise>
-												</xsl:choose>
-											</a>
-										</td>
-										<td>
-											<xsl:value-of select="TestResult/Summary/@duration" />
-										</td>
-										<td>
-											<xsl:value-of select="TestResult/MonkeyTest/@count" />
-										</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-					</div>
-				</div>
+									<xsl:if test="@type = 'key'">
+									  <span style="display:inline-block;white-space:nowrap;"><xsl:value-of select="@value"/></span>
+									</xsl:if>
+									<xsl:if test="@type = 'drag'">
+										<xsl:for-each select="Touch">
+									  		<span style="display:inline-block;white-space:nowrap;">{"X":<xsl:value-of select="@x"/>,"Y":<xsl:value-of select="@y"/>}</span>
+									  </xsl:for-each> <!-- end test -->
+									</xsl:if>
+									<xsl:if test="@type = 'tap'">
+									  <span style="display:inline-block;white-space:nowrap;">{"X":<xsl:value-of select="@x"/>,"Y":<xsl:value-of select="@y"/>}</span>
+									</xsl:if>
+									
+								</td>
+							</tr>
+							</xsl:for-each> <!-- end test -->
+							
+
+						</tbody>
+
+					</table>
 
 
 			</body>

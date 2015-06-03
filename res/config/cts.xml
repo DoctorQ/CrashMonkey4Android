@@ -38,32 +38,45 @@
 
     <option
         name="app-path"
-        value="/Users/wuxian/Downloads/58house_debug_58WuxianClient_online_v6.1.0.0_3.apk" />
+        value="/Users/wuxian/Downloads/58house_debug_58WuxianClient_online_v6.1.0.0_3.apk" 
+        />
 
     <option
         name="throttle"
-        value="300" />
+        value="300" 
+        desc="默认为300毫秒"/>
 
-    <option
-        name="skip-device-info"
-        value="false" />
+    
+   
 
     <option
         name="reboot"
-        value="true" />
+        value="false" 
+        desc="是否重启,默认为不重启"/>
 
     <option
         name="enable-root"
-        value="false" />
+        value="false" 
+        desc="是否root机器，默认为不root机器，如果在工程机上建议设置为true，非工程机，建议设置为false"/>
 
     <option
         name="skip-uninstall-app"
-        desc="测试结束后，一般会卸载测试应用，可以通过该选项设置是否卸载，true为不卸载"
+        desc="测试结束后，一般会卸载测试应用，可以通过该选项设置是否卸载，true为不卸载,默认为不卸载"
         value="true" />
 
     <option
         name="skip-device-unlock"
-        desc="是否跳过设备信息获取的步骤,true为不获取设备信息"
+        desc="是否跳过解锁阶段,默认为不解锁"
+        value="true" />
+
+    <option
+        name="bugreport"
+        desc="是否保存bugreport信息，默认不保存"
+        value="false" />
+
+    <option
+        name="tracefile"
+        desc="是否保存trace.txt文件，默认不保存"
         value="false" />
 
     <option

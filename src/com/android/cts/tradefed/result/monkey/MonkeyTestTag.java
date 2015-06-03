@@ -13,6 +13,14 @@ import com.android.cts.tradefed.result.CtsXmlResultReporter;
 
 public class MonkeyTestTag extends AbstractXmlPullParser {
 
+	public String getFinalLog() {
+		return finalLog;
+	}
+
+	public void setFinalLog(String finalLog) {
+		this.finalLog = finalLog;
+	}
+
 	public String getFinalPng() {
 		return finalPng;
 	}
@@ -58,6 +66,7 @@ public class MonkeyTestTag extends AbstractXmlPullParser {
 	private static final String RESULT_ATTR = "result";
 	private static final String EVENT_COUNT_ATTR = "count";
 	private static final String FINALPNG_ATT = "final";
+	private static final String FINALLOG_ATT = "log";
 	private List<EventTag> events = new LinkedList<EventTag>();
 	private EventTag currentTag = null;
 
@@ -65,6 +74,7 @@ public class MonkeyTestTag extends AbstractXmlPullParser {
 	private String result = "NA";
 	private int count = 0;
 	private String finalPng = "NA";
+	private String finalLog = "NA";
 
 	public void addEvent(EventTag event) {
 		events.add(event);
@@ -80,6 +90,8 @@ public class MonkeyTestTag extends AbstractXmlPullParser {
 		serializer.attribute(CtsXmlResultReporter.ns, RESULT_ATTR, getResult());
 		serializer.attribute(CtsXmlResultReporter.ns, FINALPNG_ATT,
 				getFinalPng());
+		serializer.attribute(CtsXmlResultReporter.ns, FINALLOG_ATT,
+				getFinalLog());
 		for (int i = events.size() - 1; i >= 0; i--) {
 			events.get(i).serialize(serializer, i, count);
 		}

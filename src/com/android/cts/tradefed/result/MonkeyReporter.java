@@ -40,7 +40,7 @@ public class MonkeyReporter extends AbstractXmlPullParser {
 	private static final String LOG_TAG = "MonkeyReporter";
 
 	private static final String[] MONKEY_RESULT_RESOURCES = { "index.xsl",
-			"bootstrap.css", "result.xsl" };
+			"bootstrap.css", "result.xsl","trace.xsl" };
 	private static final String REPORT_DIR = "report";
 	private List<EventTag> items = new LinkedList<EventTag>();
 	// 存放目录
@@ -69,7 +69,7 @@ public class MonkeyReporter extends AbstractXmlPullParser {
 
 	private void init() {
 		// 当前目录下创建reporter目录
-		reporterDir = new File(mSaveFile, REPORT_DIR);
+		reporterDir = mSaveFile;
 		reporterDir.mkdir();
 		if (!reporterDir.exists())
 			return;
@@ -86,13 +86,16 @@ public class MonkeyReporter extends AbstractXmlPullParser {
 				.getAbsolutePath();
 		String result_xsl = new File(reporterDir, MONKEY_RESULT_RESOURCES[2])
 				.getAbsolutePath();
+		String trace_xsl = new File(reporterDir,MONKEY_RESULT_RESOURCES[3]).getAbsolutePath();
 		String xml = mXmlFile.getAbsolutePath();
 		String indeHtml = new File(reporterDir, "index.html").getAbsolutePath();
 		String resultHtml = new File(reporterDir, "result.html")
 				.getAbsolutePath();
+		String traceHtml = new File(reporterDir,"trace.html").getAbsolutePath();
 
 		transferToHtml(result_xsl, xml, resultHtml);
 		transferToHtml(index_xsl, xml, indeHtml);
+		transferToHtml(trace_xsl, xml, traceHtml);
 
 	}
 

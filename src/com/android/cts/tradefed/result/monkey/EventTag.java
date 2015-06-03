@@ -9,6 +9,14 @@ import org.kxml2.io.KXmlSerializer;
 import com.android.cts.tradefed.result.AbstractXmlPullParser;
 
 public abstract class EventTag extends AbstractXmlPullParser {
+	public String getTime() {
+		return time;
+	}
+
+	public void setTime(String time) {
+		this.time = time;
+	}
+
 	public int getPos() {
 		return pos;
 	}
@@ -20,6 +28,7 @@ public abstract class EventTag extends AbstractXmlPullParser {
 	protected static final String EVENT_TAG = "Event";
 	protected static final String INDEX_ATTR = "index";
 	protected static final String TYPE_ATTR = "type";
+	protected static final String TIME_ATTR = "time";
 	protected static final String IMAGE_ATTR = "image";
 	protected static final String LOG_ATTR = "log";
 	protected static final String POS_ATTR = "pos";
@@ -29,6 +38,7 @@ public abstract class EventTag extends AbstractXmlPullParser {
 	public static final String EVENT_TYPE_KEY = "key";
 	private int index = 0;
 	private String type = "NA";
+	private String time = "NA";
 	private String image = "ss";
 	private String log = "NA";
 	private int pos = 0;
