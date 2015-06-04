@@ -1,2 +1,0 @@
-# AAM
-Android Advance Monkey
