@@ -114,7 +114,7 @@ public class CtsXmlResultReporter implements ITestInvocationListener {
 	private String mResultServer;
 
 	@Option(name = "p", description = "指定的包名，如果没有指定，就从手机的当前界面开始")
-	private String mPackage = "NA";
+	private String mPackage = null;
 
 	@Option(name = "report-path", description = "指定的包名，如果没有指定，就从手机的当前界面开始")
 	private String mReportPath = null;
@@ -194,7 +194,8 @@ public class CtsXmlResultReporter implements ITestInvocationListener {
 
 		// 设置Monkey相关的tag
 		monkeyTag = mResults.getMonkeyTag();
-		monkeyTag.setApplication(mPackage);
+		if (mPackage != null)
+			monkeyTag.setApplication(mPackage);
 		monkeyTag.setCount(mInjectEvents);
 	}
 
@@ -280,23 +281,32 @@ public class CtsXmlResultReporter implements ITestInvocationListener {
 					mEventTag.setLog(mLogFile.getPath());
 			} else if (dataName.startsWith("monkey")
 					&& dataType == LogDataType.TEXT) {
-				monkeyTag.setFinalLog(logFile.getPath());
-				CrashAnalyzer crashAnalyzer = new CrashAnalyzer(logFile);
-				crashAnalyzer.parserLogcat();
-				if (crashAnalyzer.hasCrash()) {
-					mResults.setHasCrash("YES");
-					mResults.setCrashFile(crashAnalyzer.getmCrashFile()
-							.getAbsolutePath());
-					mResults.setResult(crashAnalyzer.getCrashCount() + " Crash.");
-				}
-				//monkeyTag.setResult(crashAnalyzer.getCrashCount() + " Crash");
+				monkeyTag.setFinalLog(logFile.getAbsolutePath());
+				setAndAnalyzeLog(logFile);
+				// monkeyTag.setResult(crashAnalyzer.getCrashCount() +
+				// " Crash");
 			}
 			if (TestInvocation.DEVICE_LOG_NAME.equals(dataName)) {
 				mLogPath = logFile.getAbsolutePath();
+				if (mPackage == null) {
+					monkeyTag.setFinalLog(logFile.getAbsolutePath());
+					setAndAnalyzeLog(logFile);
+				}
 			}
 			logResult(String.format("Saved log %s", logFile.getName()));
 		} catch (IOException e) {
 			CLog.e("Failed to write log for %s", dataName);
+		}
+	}
+
+	private void setAndAnalyzeLog(File logFile) {
+		CrashAnalyzer crashAnalyzer = new CrashAnalyzer(logFile);
+		crashAnalyzer.parserLogcat();
+		if (crashAnalyzer.hasCrash()) {
+			mResults.setHasCrash("YES");
+			mResults.setCrashFile(crashAnalyzer.getmCrashFile()
+					.getAbsolutePath());
+			mResults.setResult(crashAnalyzer.getCrashCount() + " Crash.");
 		}
 	}
 
@@ -640,7 +650,7 @@ public class CtsXmlResultReporter implements ITestInvocationListener {
 			MonkeyKeyEvent key = (MonkeyKeyEvent) event;
 			KeyTag keyTag = new KeyTag();
 			keyTag.setValue(key.getKeyCode());
-			
+
 			mEventTag = keyTag;
 			break;
 		case 1:
@@ -675,6 +685,5 @@ public class CtsXmlResultReporter implements ITestInvocationListener {
 		monkeyTag.addEvent(mEventTag);
 
 	}
-	
 
 }

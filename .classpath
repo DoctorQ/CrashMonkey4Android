@@ -10,6 +10,7 @@
 	<classpathentry kind="lib" path="libs/javalib-deviceutil.jar"/>
 	<classpathentry kind="lib" path="libs/imagedraw.jar"/>
 	<classpathentry kind="lib" path="libs/ddmlib-prebuilt.jar"/>
+	<classpathentry kind="lib" path="libs/tradefederation.jar"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/tradefederation"/>
 	<classpathentry kind="lib" path="libs/jline-0.9.9.jar"/>
 	<classpathentry kind="lib" path="libs/commons-compress-1.8.1.jar"/>

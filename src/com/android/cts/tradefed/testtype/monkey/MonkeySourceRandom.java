@@ -80,15 +80,15 @@ public class MonkeySourceRandom implements MonkeyEventSource {
 		String lastKey = "";
 
 		if (cls < mFactors[FACTOR_TOUCH]) {// 15
-			CLog.i("FACTOR_TOUCH");
+			CLog.d("FACTOR_TOUCH");
 			generatePointerEvent(mRandom, GESTURE_TAP);
 			return;
 		} else if (cls < mFactors[FACTOR_MOTION]) {// 10
-			CLog.i("FACTOR_MOTION");
+			CLog.d("FACTOR_MOTION");
 			generatePointerEvent(mRandom, GESTURE_MOTION);
 			return;
 		} else if (cls < mFactors[FACTOR_DRAG]) {
-			CLog.i("FACTOR_DRAG");
+			CLog.d("FACTOR_DRAG");
 			generatePointerEvent(mRandom, DRAG);
 			return;
 		}
@@ -96,13 +96,13 @@ public class MonkeySourceRandom implements MonkeyEventSource {
 		// The remaining event categories are injected as key events
 		for (;;) {
 			if (cls < mFactors[FACTOR_NAV]) {// 25
-				CLog.i("FACTOR_NAV");
+				CLog.d("FACTOR_NAV");
 				lastKey = NAV_KEYS[mRandom.nextInt(NAV_KEYS.length)];
 			} else if (cls < mFactors[FACTOR_MAJORNAV]) {// 15
-				CLog.i("FACTOR_MAJORNAV");
+				CLog.d("FACTOR_MAJORNAV");
 				lastKey = MAJOR_NAV_KEYS[mRandom.nextInt(MAJOR_NAV_KEYS.length)];
 			} else if (cls < mFactors[FACTOR_SYSOPS]) {// 2
-				CLog.i("FACTOR_SYSOPS");
+				CLog.d("FACTOR_SYSOPS");
 				lastKey = SYS_KEYS[mRandom.nextInt(SYS_KEYS.length)];
 			}
 			if (lastKey != "KEYCODE_POWER" && lastKey != "KEYCODE_ENDCALL") {
@@ -180,9 +180,9 @@ public class MonkeySourceRandom implements MonkeyEventSource {
 
 		// if verbose, show factors
 		if (mVerbose > 0) {
-			CLog.i("// Event percentages:");
+			CLog.d("// Event percentages:");
 			for (int i = 0; i < FACTORZ_COUNT; ++i) {
-				CLog.i("//   " + i + ": " + mFactors[i] + "%");
+				CLog.d("//   " + i + ": " + mFactors[i] + "%");
 			}
 		}
 
@@ -250,7 +250,7 @@ public class MonkeySourceRandom implements MonkeyEventSource {
 		x = arg[random.nextInt(arg.length)] * x;
 		Point newPoint = new Point();
 
-		CLog.i(String.format("(%s,%s)", x, y));
+		CLog.d(String.format("(%s,%s)", x, y));
 		newPoint.x = Math.max(Math.min(point.x + x, display.getWidth()), 0);
 		newPoint.y = Math.max(Math.min(point.y + y, display.getHeight()), 0);
 		return newPoint;

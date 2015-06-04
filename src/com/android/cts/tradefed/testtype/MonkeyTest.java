@@ -18,7 +18,6 @@ import com.android.tradefed.config.Option;
 import com.android.tradefed.config.Option.Importance;
 import com.android.tradefed.device.DeviceNotAvailableException;
 import com.android.tradefed.device.ITestDevice;
-import com.android.tradefed.device.LogcatReceiver;
 import com.android.tradefed.device.MonkeyLogcatReceiver;
 import com.android.tradefed.device.TestDeviceOptions;
 import com.android.tradefed.log.LogUtil.CLog;
@@ -40,7 +39,7 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 	private static final String MONKEY_LOG_NAME = "monkey";
 
 	@Option(name = "p", description = "指定的包名，如果没有指定，就从手机的当前界面开始")
-	private String mPackage = "";
+	private String mPackage = null;
 	@Option(name = "v", description = "注入的事件数，默认为1000次")
 	private int mInjectEvents = 1000;
 	@Option(name = "throttle", description = "每一个事件的间隔时间，默认为300毫秒，")
@@ -139,7 +138,7 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 	public void run(ITestInvocationListener listener)
 			throws DeviceNotAvailableException {
 
-		CLog.i(String.format("Monkey Test for device %s", getDevice()
+		CLog.d(String.format("Monkey Test for device %s", getDevice()
 				.getSerialNumber()));
 		mListener = listener;
 		beforeTest(listener);
@@ -172,6 +171,7 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 		// 获取bugreport信息
 		getBugreport();
 		getTraceFile();
+		saveAndStopMonkeyLog();
 	}
 
 	// 测试前的准备工作
@@ -260,7 +260,7 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 	private void installPackage() throws DeviceNotAvailableException {
 		if (mAppPath == null)
 			return;
-		CLog.i("Attempting to install %s on %s ", mAppPath, getDevice()
+		CLog.d("Attempting to install %s on %s ", mAppPath, getDevice()
 				.getSerialNumber());
 		getDevice().installPackage(new File(mAppPath), true);
 
@@ -271,10 +271,16 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 		if (mAppPath == null)
 			return;
 		if (!mSkipUninstallApp) {
-			CLog.i("Attempting to uninstall %s on %s  ", mPackage, getDevice()
+			CLog.d("Attempting to uninstall %s on %s  ", mPackage, getDevice()
 					.getSerialNumber());
 			getDevice().uninstallPackage(mPackage);
 		}
+
+	}
+
+	private void saveAndStopMonkeyLog() {
+		if (mPackage == null)
+			return;
 		// 关闭Monkey的log抓取器
 		InputStreamSource logcatSource = mLogcatReceiver.getLogcatData();
 		if (logcatSource != null) {
@@ -282,7 +288,6 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 			logcatSource.cancel();
 		}
 		stopLogcat();
-
 	}
 
 	// 启动应用
@@ -290,7 +295,7 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 		if (mPackage == null || mActivity == null)
 			return;
 		String cmd = "am start " + mPackage + "/" + mActivity;
-		CLog.i("Attempting to launch %s on %s using command [%s] ", mPackage,
+		CLog.d("Attempting to launch %s on %s using command [%s] ", mPackage,
 				getDevice().getSerialNumber(), cmd);
 		String result = getDevice().executeShellCommand(cmd);
 		if (result.contains("does not exist") || result.contains("Error")) {
@@ -337,7 +342,7 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 					mDevice.getSerialNumber(), e.toString());
 		}
 		time = System.currentTimeMillis() - current;
-		CLog.i(String.format("Cost time %d ms in screenshot", time));
+		CLog.d(String.format("Cost time %d ms in screenshot", time));
 
 	}
 
@@ -397,6 +402,7 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 					getDevice().getSerialNumber());
 			return;
 		}
+		CLog.d("Openmonkey logcat for %s, ", getDevice().getSerialNumber());
 		mLogcatReceiver = createMonkeyLogcatReceiver();
 		mLogcatReceiver.start();
 	}
