@@ -113,12 +113,12 @@ public class CtsXmlResultReporter implements ITestInvocationListener {
 	@Option(name = "result-server", description = "Server to publish test results.")
 	private String mResultServer;
 
-	@Option(name = "p", description = "指定的包名，如果没有指定，就从手机的当前界面开始")
+	@Option(name = "p", description = "package of test app")
 	private String mPackage = null;
 
-	@Option(name = "report-path", description = "指定的包名，如果没有指定，就从手机的当前界面开始")
+	@Option(name = "report-path", description = "result report save path")
 	private String mReportPath = null;
-	@Option(name = "v", description = "注入的事件数，默认为1000次")
+	@Option(name = "v", description = "monkey event count")
 	private int mInjectEvents = 1000;
 
 	protected IBuildInfo mBuildInfo;
@@ -433,7 +433,7 @@ public class CtsXmlResultReporter implements ITestInvocationListener {
 
 		File reportFile = getResultFile(mReportDir);
 		createXmlResult(reportFile, mStartTime, elapsedTime);
-		copyFormattingFiles(mReportDir);
+		//copyFormattingFiles(mReportDir);
 		zipResults(mReportDir);
 
 		try {
@@ -463,10 +463,10 @@ public class CtsXmlResultReporter implements ITestInvocationListener {
 
 	private void logResult(String format, Object... args) {
 		if (mQuietOutput) {
-			CLog.i(format, args);
+			CLog.d(format, args);
 		} else {
-			Log.logAndDisplay(LogLevel.INFO, mDeviceSerial,
-					String.format(format, args));
+//			Log.logAndDisplay(LogLevel.DEBUG, mDeviceSerial,
+//					String.format(format, args));
 		}
 	}
 

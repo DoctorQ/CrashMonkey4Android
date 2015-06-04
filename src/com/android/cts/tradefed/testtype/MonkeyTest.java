@@ -38,24 +38,26 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 	public static final String FINAL_SCREENSHOT = "final";
 	private static final String MONKEY_LOG_NAME = "monkey";
 
-	@Option(name = "p", description = "指定的包名，如果没有指定，就从手机的当前界面开始")
+	@Option(name = "p", description = "package of test app")
 	private String mPackage = null;
-	@Option(name = "v", description = "注入的事件数，默认为1000次")
+	@Option(name = "a", description = "main activity of test app")
+	private String mActivity = null;
+	@Option(name = "v", description = "monkey event count")
 	private int mInjectEvents = 1000;
-	@Option(name = "throttle", description = "每一个事件的间隔时间，默认为300毫秒，")
+	@Option(name = "throttle", description = "The delay time between the events")
 	private int mThrottle = 300;
 
-	@Option(name = "pct-tap", description = "点击事件的百分比")
+	@Option(name = "pct-tap", description = "percentage of tap event")
 	private float mTouchPct = 0.0f;
-	@Option(name = "pct-motion", description = "滑动事件的百分比")
+	@Option(name = "pct-motion", description = "percentage of motion event")
 	private float mMotionPct = 0.0f;
-	@Option(name = "pct-nav", description = "基本导航事件的百分比")
+	@Option(name = "pct-nav", description = "percentage of navigation event")
 	private float mNavPct = 0.0f;
-	@Option(name = "pct-majornav", description = "主要导航事件的百分比")
+	@Option(name = "pct-majornav", description = "percentage of major navigation event")
 	private float mMajorNavPct = 0.0f;
-	@Option(name = "pct-syskeys", description = "系统事件的百分比")
+	@Option(name = "pct-syskeys", description = "percentage of system key event")
 	private float mSyskeysPct = 0.0f;
-	@Option(name = "pct-drag", description = "系统事件的百分比")
+	@Option(name = "pct-drag", description = "percentage of drag evnet")
 	private float mDrag = 0.0f;
 	@Option(name = "logcat-size", description = "The max number of logcat data in bytes to capture when --logcat-on-failure is on. "
 			+ "Should be an amount that can comfortably fit in memory.")
@@ -70,30 +72,28 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 			+ "the test report.")
 	private boolean mSkipDeviceInfo = false;
 
-	@Option(name = "skip-device-unlock", description = "跳过解锁步骤")
+	@Option(name = "skip-device-unlock", description = "no unlock")
 	private boolean mSkipDeviceUnlock = false;
 
-	@Option(name = "app-path", description = "指定app本地路径")
+	@Option(name = "app-path", description = "local app's path")
 	private String mAppPath = null;
 
-	@Option(name = "a", description = "指定app的主activity")
-	private String mActivity = null;
-	@Option(name = "wifiSsdk", description = "wifi用户名")
+	
+	@Option(name = "wifiSsdk", description = "wifi username")
 	private String mWifiSSID = null;
-	@Option(name = "wifiPsk", description = "wifi密码")
+	@Option(name = "wifiPsk", description = "wifi password")
 	private String mWifiPsk = null;
 
-	@Option(name = "skip-uninstall-app", description = "wifi密码")
+	@Option(name = "skip-uninstall-app", description = "no uninstall test app")
 	private boolean mSkipUninstallApp = false;
 
-	@Option(name = "monkey-log-size", description = "应用log的大小")
+	@Option(name = "monkey-log-size", description = "monkey log size")
 	private long mMonkeyLogSize = 10 * 1024 * 1024;
 	@Option(name = "bugreport", shortName = 'b', description = "take a bugreport after each failed test. "
 			+ "Warning: can potentially use a lot of disk space.")
 	private boolean mBugreport = false;
 
-	@Option(name = "tracefile", description = "take a bugreport after each failed test. "
-			+ "Warning: can potentially use a lot of disk space.")
+	@Option(name = "tracefile", description = "get trace file ,in /data/anr/trace.txt")
 	private boolean mTrace = false;
 
 	private ITestDevice mDevice = null;
