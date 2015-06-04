@@ -2,33 +2,37 @@
 
 CrashMonkey4Android,是一个依靠Cts框架,对原生Monkey进行改造后的产物,拥有以下新增功能:
 
- 1. 保存每一步的截图
- 2. 保存logcat
- 3. 保存每一个Monkey事件的信息
- 4. 分析Crash
- 5. Html报告
- 6. 支持多设备
+ 1. 保存每一步的截图.
+ 2. 保存logcat.
+ 3. 保存每一个Monkey事件的信息.
+ 4. 分析Crash.
+ 5. Html报告.
+ 6. 支持多设备.
 
 
 # 环境要求
  
 
- 1. 安装JDK1.7并配置环境变量
- 2. 安装SDK并配置环境变量
+ 1. 安装JDK1.7并配置环境变量.
+ 2. 安装SDK并配置环境变量.
 
 
 
 # 如何使用
 
 
-[MAC](./docs/how_to_use_in_mac.md)
+[MAC版](./docs/how_to_use_in_mac.md).
 
    
 
 
 # 参数配置
 
-我们可以通过在命令行下输入`run cts --help-all` 获取所有的可设置参数:
+我们提供了很多可供配置的参数.
+
+## 查看参数
+
+> 我们可以通过在命令行下输入`run cts --help-all` 获取所有的可设置参数:
 
 ```
 test options:
@@ -62,7 +66,7 @@ test options:
 
   
 ```
-主要关注以下属性:
+## 主要属性:
 
 
  1. p :测试app的包名.
@@ -75,7 +79,8 @@ test options:
  8. pct-syskeys:系统事件百分比.（这些按键通常由系统保留使用,如Home、Back、Start Call、End Call、音量调节）,默认为15%.
  9. pct-drag:拖拽事件的百分比,默认为30%.
 
-目前只实现了5/6,但是上面的数字相加一定要为100%.
+>目前只实现了5/6,但是上面的数字相加一定要为100%.
+
 
 10. reboot : 重启机器,默认为false,不重启.如果想要重启的话,直接在命令行附上该参数,不用在后面加true,因为boolen类型的设置方式和其他不一样.
 11. device-unlock:解锁手机,默认为false,如果收集重启的话,建议将该属性设置为true.解锁原理就是利用appium自带的apk来解锁的.
@@ -84,7 +89,7 @@ test options:
 14. wifiSsdk:wifi的用户名
 15. wifiPsk:wifi的密码
 
-因为该工具支持自动连接wifi,所以你的app需要在wifi情况下工作,请设置这两个属性,它会自动检测断网并重连
+> 因为该工具支持自动连接wifi,所以你的app需要在wifi情况下工作,请设置这两个属性,它会自动检测断网并重连.
 
 16. skip-uninstall-app:是否跳过卸载app的阶段,因为如果使用本地app安装后,有时想卸载应用,可以设置该属性为false.默认是不卸载.
 17. monkey-log-size:如果针对某一个应用测试,该工具为该app单独收集log,这里可以设置log可以最大到多少B.
