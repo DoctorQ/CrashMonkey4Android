@@ -65,9 +65,9 @@
         value="true" />
 
     <option
-        name="skip-device-unlock"
+        name="device-unlock"
         desc="是否跳过解锁阶段,默认为不解锁"
-        value="true" />
+        value="false" />
 
     <option
         name="bugreport"

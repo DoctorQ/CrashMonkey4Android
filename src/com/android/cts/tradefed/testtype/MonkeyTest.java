@@ -72,8 +72,8 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 			+ "the test report.")
 	private boolean mSkipDeviceInfo = false;
 
-	@Option(name = "skip-device-unlock", description = "no unlock")
-	private boolean mSkipDeviceUnlock = false;
+	@Option(name = "device-unlock", description = "unlock device")
+	private boolean mDeviceUnlock = false;
 
 	@Option(name = "app-path", description = "local app's path")
 	private String mAppPath = null;
@@ -138,7 +138,7 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 	public void run(ITestInvocationListener listener)
 			throws DeviceNotAvailableException {
 
-		CLog.d(String.format("Monkey Test for device %s", getDevice()
+		CLog.i(String.format("Monkey Test for device %s", getDevice()
 				.getSerialNumber()));
 		mListener = listener;
 		beforeTest(listener);
@@ -260,7 +260,7 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 	private void installPackage() throws DeviceNotAvailableException {
 		if (mAppPath == null)
 			return;
-		CLog.d("Attempting to install %s on %s ", mAppPath, getDevice()
+		CLog.i("Attempting to install %s on %s ", mAppPath, getDevice()
 				.getSerialNumber());
 		getDevice().installPackage(new File(mAppPath), true);
 
@@ -271,7 +271,7 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 		if (mAppPath == null)
 			return;
 		if (!mSkipUninstallApp) {
-			CLog.d("Attempting to uninstall %s on %s  ", mPackage, getDevice()
+			CLog.i("Attempting to uninstall %s on %s  ", mPackage, getDevice()
 					.getSerialNumber());
 			getDevice().uninstallPackage(mPackage);
 		}
@@ -295,7 +295,7 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 		if (mPackage == null || mActivity == null)
 			return;
 		String cmd = "am start " + mPackage + "/" + mActivity;
-		CLog.d("Attempting to launch %s on %s using command [%s] ", mPackage,
+		CLog.i("Attempting to launch %s on %s using command [%s] ", mPackage,
 				getDevice().getSerialNumber(), cmd);
 		String result = getDevice().executeShellCommand(cmd);
 		if (result.contains("does not exist") || result.contains("Error")) {
@@ -402,7 +402,7 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 					getDevice().getSerialNumber());
 			return;
 		}
-		CLog.d("Openmonkey logcat for %s, ", getDevice().getSerialNumber());
+		CLog.i("Open monkey logcat for %s, ", getDevice().getSerialNumber());
 		mLogcatReceiver = createMonkeyLogcatReceiver();
 		mLogcatReceiver.start();
 	}
@@ -433,7 +433,7 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 
 	void unlockDevice(ITestDevice device, CtsBuildHelper ctsBuild)
 			throws DeviceNotAvailableException {
-		if (!mSkipDeviceUnlock)
+		if (mDeviceUnlock)
 			DeviceUnlock.unlockDevice(device, ctsBuild.getTestCasesDir());
 	}
 
