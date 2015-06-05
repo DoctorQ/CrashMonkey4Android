@@ -33,7 +33,7 @@
 
 找到CtsConsole.java文件，位于`com.android.cts.tradefed.command`包下,右击Run As->Run Configurations,切换到Arguments一栏:
 
-![](/Users/wuxian/Desktop/EB53358C-A7AF-4CBF-8EFC-9EEF277D098E.png)
+![这里写图片描述](http://img.blog.csdn.net/20150605113912716)
 
 其中VM arguments中填入`-DCTS_ROOT=/Users/wuxian/Documents`
 后面的路径一定要指向你下载的可执行文件的根目录,比如我本地的可执行文件存放路径为`/Users/wuxian/Documents/android-cts`,所以我CTS_ROOT变量设置为android-cts的根目录`/Users/wuxian/Documents`。
