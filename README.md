@@ -21,8 +21,9 @@ CrashMonkey4Android,是一个依靠Cts框架,对原生Monkey进行改造后的�
 # 如何使用
 
 
-[MAC版](./docs/how_to_use_in_mac.md).
+[安装-MAC版](./docs/how_to_use_in_mac.md).
 
+[如何进行二次开发](./docs/how_to_develop.md).
    
 
 
@@ -100,7 +101,7 @@ test options:
 
 目前CrashMonkey4Android还处于pre-release阶段,需要改善的地方还有很多,请大家多多提出建议.
 
-目前我们已经推出了iOS和Android两个平台的Monkey,归并到一个组织[58Automation](https://github.com/58Automation)中,欢迎大家fork,有问题请提Issue
+目前我们已经推出了iOS和Android两个平台的Monkey,归并到一个组织[58Automation](https://github.com/58Automation)中,欢迎大家fork,有问题请提Issue.
 
 
 
