@@ -1,11 +1,9 @@
 # Mac下配置
 
 ## 第一步
- 下载可执行文件，去[release]( https://github.com/DoctorQ/CrashMonkey4Android/releases)页面中下载最新版本，点击android-cts.zip文件下载：
+ 
 
-![这里写图片描述](http://img.blog.csdn.net/20150604152838451)
-
-你也可以同步[CrashMonkey4Androd_bin]项目(https://github.com/DoctorQ/CrashMonkey4Androd_bin.git)来获取可执行文件，推荐使用这种方式，因为修复bug比较及时。
+同步[CrashMonkey4Androd_bin]项目(https://github.com/DoctorQ/CrashMonkey4Androd_bin.git) 来获取可执行文件，或者直接下载ZIP包，解压。
 
 ## 第二步
 
