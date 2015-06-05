@@ -477,7 +477,7 @@ public class CtsXmlResultReporter implements ITestInvocationListener {
 			if (!monkeyResult.exists()) {
 				monkeyResult.createNewFile();
 			}
-			FileUtil.writeToFile(mDeviceSerial + "," + url, monkeyResult);
+			FileUtil.writeToFile(mDeviceSerial + "," + url + "\n", monkeyResult);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
