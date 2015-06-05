@@ -21,4 +21,6 @@ Using commandline arguments as starting command: [run, cts, --plan, Monkey, -v, 
 
 在Mac环境下会遇到这种问题，搜索后发现是Mac版的IDE的bug，所以如果想解决这个问题，需要将tradefederation项目中的DeviceManager.java项目中adb修改为你的sdk全目录就可以了.
 
-![](/Users/wuxian/Desktop/CF3ABF70-C15A-4AFB-AB5E-EFE76B48041C.png)
+![这里写图片描述](http://img.blog.csdn.net/20150605111248611)
+
+
