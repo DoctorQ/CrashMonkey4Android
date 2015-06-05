@@ -45,7 +45,6 @@ import com.android.cts.tradefed.testtype.monkey.MonkeyKeyEvent;
 import com.android.cts.tradefed.testtype.monkey.MonkeyMotionEvent;
 import com.android.cts.tradefed.testtype.monkey.MonkeyTapEvent;
 import com.android.ddmlib.Log;
-import com.android.ddmlib.Log.LogLevel;
 import com.android.ddmlib.testrunner.TestIdentifier;
 import com.android.tradefed.build.IBuildInfo;
 import com.android.tradefed.build.IFolderBuildInfo;
@@ -120,6 +119,12 @@ public class CtsXmlResultReporter implements ITestInvocationListener {
 	private String mReportPath = null;
 	@Option(name = "v", description = "monkey event count")
 	private int mInjectEvents = 1000;
+
+	@Option(name = "monkeyresult-path", description = "local option, only use for ci")
+	private String mMonkeyResultPath = null;
+
+	@Option(name = "webservice", description = "webservice的根目录")
+	private String mWSRPATH = null;
 
 	protected IBuildInfo mBuildInfo;
 	private String mStartTime;
@@ -433,7 +438,7 @@ public class CtsXmlResultReporter implements ITestInvocationListener {
 
 		File reportFile = getResultFile(mReportDir);
 		createXmlResult(reportFile, mStartTime, elapsedTime);
-		//copyFormattingFiles(mReportDir);
+		// copyFormattingFiles(mReportDir);
 		zipResults(mReportDir);
 
 		try {
@@ -451,6 +456,7 @@ public class CtsXmlResultReporter implements ITestInvocationListener {
 			reporter = new MonkeyReporter(xmlFile);
 		} else {
 			reporter = new MonkeyReporter(xmlFile, new File(mReportPath));
+			generateMonkeyReslutTxt(reporter);
 		}
 		reporter.createReporter();
 		try {
@@ -461,12 +467,29 @@ public class CtsXmlResultReporter implements ITestInvocationListener {
 		}
 	}
 
+	private void generateMonkeyReslutTxt(MonkeyReporter reporter) {
+		if (mWSRPATH == null || mMonkeyResultPath == null) {
+			return;
+		}
+		File monkeyResult = new File(mMonkeyResultPath);
+		String url = mWSRPATH + "/" + reporter.getmDir();
+		try {
+			if (!monkeyResult.exists()) {
+				monkeyResult.createNewFile();
+			}
+			FileUtil.writeToFile(mDeviceSerial + "," + url, monkeyResult);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	private void logResult(String format, Object... args) {
 		if (mQuietOutput) {
 			CLog.d(format, args);
 		} else {
-//			Log.logAndDisplay(LogLevel.DEBUG, mDeviceSerial,
-//					String.format(format, args));
+			// Log.logAndDisplay(LogLevel.DEBUG, mDeviceSerial,
+			// String.format(format, args));
 		}
 	}
 

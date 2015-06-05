@@ -37,10 +37,19 @@ import com.android.tradefed.util.FileUtil;
 import com.android.tradefed.util.xml.AbstractXmlParser.ParseException;
 
 public class MonkeyReporter extends AbstractXmlPullParser {
+		
+	public String getmDir() {
+		return mDir;
+	}
+
+	public void setmDir(String mDir) {
+		this.mDir = mDir;
+	}
+
 	private static final String LOG_TAG = "MonkeyReporter";
 
 	private static final String[] MONKEY_RESULT_RESOURCES = { "index.xsl",
-			"bootstrap.css", "result.xsl","trace.xsl" };
+			"bootstrap.css", "result.xsl", "trace.xsl" };
 	private static final String REPORT_DIR = "report";
 	private List<EventTag> items = new LinkedList<EventTag>();
 	// 存放目录
@@ -48,16 +57,24 @@ public class MonkeyReporter extends AbstractXmlPullParser {
 	private File mXmlFile = null;
 	// 报告目录位于存放目录下
 	private File reporterDir = null;
+	private String mDir = null;
 
 	public MonkeyReporter(File xmlFile, File saveFile) {
 		this.mXmlFile = xmlFile;
-		this.mSaveFile = saveFile;
+
+		if (!saveFile.exists()) {
+			throw new NullPointerException(String.format(
+					"report path :%s not exists", saveFile.getAbsolutePath()));
+		}
+		mDir = TimeUtil.getResultTimestamp();
+		mSaveFile = new File(saveFile, mDir);
+		mSaveFile.mkdir();
 		if (mXmlFile == null || !mXmlFile.exists())
 			return;
 		// 初始化
 		init();
 	}
-
+	
 	// 如果只传xml文件路径，那么保存的目录就在xml同级目录
 	public MonkeyReporter(File xmlFile) {
 		this.mXmlFile = xmlFile;
@@ -86,12 +103,14 @@ public class MonkeyReporter extends AbstractXmlPullParser {
 				.getAbsolutePath();
 		String result_xsl = new File(reporterDir, MONKEY_RESULT_RESOURCES[2])
 				.getAbsolutePath();
-		String trace_xsl = new File(reporterDir,MONKEY_RESULT_RESOURCES[3]).getAbsolutePath();
+		String trace_xsl = new File(reporterDir, MONKEY_RESULT_RESOURCES[3])
+				.getAbsolutePath();
 		String xml = mXmlFile.getAbsolutePath();
 		String indeHtml = new File(reporterDir, "index.html").getAbsolutePath();
 		String resultHtml = new File(reporterDir, "result.html")
 				.getAbsolutePath();
-		String traceHtml = new File(reporterDir,"trace.html").getAbsolutePath();
+		String traceHtml = new File(reporterDir, "trace.html")
+				.getAbsolutePath();
 
 		transferToHtml(result_xsl, xml, resultHtml);
 		transferToHtml(index_xsl, xml, indeHtml);
