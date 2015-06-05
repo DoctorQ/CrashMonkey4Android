@@ -3,7 +3,7 @@
 ## 第一步
  
 
-同步[CrashMonkey4Androd_bin]项目(https://github.com/DoctorQ/CrashMonkey4Androd_bin.git) 来获取可执行文件，或者直接下载ZIP包，解压。
+同步[CrashMonkey4Androd_bin](https://github.com/DoctorQ/CrashMonkey4Androd_bin.git)  项目来获取可执行文件，或者直接下载ZIP包，解压。
 
 ## 第二步
 
