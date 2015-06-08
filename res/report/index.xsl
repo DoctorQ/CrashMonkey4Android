@@ -17,13 +17,7 @@
 
 		<html>
 			<head>
-				<title>Monkey Test Summary</title>
-				<script>
-					function toggle(id) {
-					e = document.getElementById(id)
-					e.style.display = e.style.display == "none" ? "block" : "none"
-					}
-				</script>
+				<title>Monkey Test</title>
 				<STYLE type="text/css">
 					@import "bootstrap.css"
 				</STYLE>
@@ -35,21 +29,13 @@
 							<h1>Summary</h1>
 							<div>
 								<ul>
-									<li>
-										Hardware:
-										<xsl:value-of select="TestResult/DeviceInfo/BuildInfo/@build_model" />
+									<li>Hardware:<xsl:value-of select="TestResult/DeviceInfo/BuildInfo/@build_model"/>,<xsl:value-of select="TestResult/DeviceInfo/BuildInfo/@deviceID"/>
 									</li>
-									<li>
-										Application:
-										<xsl:value-of select="TestResult/MonkeyTest/@application" />
+									<li>Application:<xsl:value-of select="TestResult/MonkeyTest/@application" />
 									</li>
-									<li>
-										Span:
-										<xsl:value-of select="TestResult/@starttime" />~<xsl:value-of select="TestResult/@endtime" />
+									<li>Span:<xsl:value-of select="TestResult/@starttime" />~<xsl:value-of select="TestResult/@endtime" />
 									</li>
-									<li>
-										Results:
-										<xsl:value-of select="TestResult/Summary/@result" />
+									<li>Results:<xsl:value-of select="TestResult/Summary/@result" />
 									</li>
 								</ul>
 							</div>

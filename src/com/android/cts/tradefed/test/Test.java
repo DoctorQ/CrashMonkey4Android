@@ -17,7 +17,7 @@ public class Test extends TestCase {
 
 		MonkeyReporter reporter = new MonkeyReporter(
 				new File(
-						"/Users/wuxian/Downloads/android-cts/repository/results/2015.05.27_18.23.30/testResult.xml"));
+						"/Users/wuxian/Downloads/android-cts/repository/results/2015.05.27_18.23.30/testResult.xml"), null);
 		reporter.drawImage();
 		// reporter.createReporter();
 		// reporter.transferToHtml("/Users/wuxian/Downloads/android-cts/repository/results/2015.05.27_10.56.35/report/index.xsl",
@@ -33,7 +33,7 @@ public class Test extends TestCase {
 		MonkeyReporter reporter = new MonkeyReporter(
 				new File(
 						"/Users/wuxian/Downloads/android-cts/repository/results/2015.05.26_11.14.34/testResult.xml"),
-				new File("/Users/wuxian/Desktop/index"));
+				new File("/Users/wuxian/Desktop/index"), null);
 	}
 
 	public void test_File() throws IOException {

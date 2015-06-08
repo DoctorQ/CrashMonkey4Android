@@ -274,7 +274,7 @@ public class CtsXmlResultReporter implements ITestInvocationListener {
 			if (dataType == LogDataType.PNG) {
 				// 保存图片
 				if (dataName.startsWith(MonkeyTest.FINAL_SCREENSHOT)) {
-					monkeyTag.setFinalPng(logFile.getAbsolutePath());
+					monkeyTag.setFinalPng(logFile.getName());
 				} else {
 					mPngFile = logFile;
 				}
@@ -283,18 +283,17 @@ public class CtsXmlResultReporter implements ITestInvocationListener {
 				// 保存log信息
 				mLogFile = logFile;
 				if (logFile != null && mEventTag != null)
-					mEventTag.setLog(mLogFile.getPath());
+					mEventTag.setLog(mLogFile.getName());
 			} else if (dataName.startsWith("monkey")
 					&& dataType == LogDataType.TEXT) {
-				monkeyTag.setFinalLog(logFile.getAbsolutePath());
+				monkeyTag.setFinalLog(logFile.getName());
 				setAndAnalyzeLog(logFile);
 				// monkeyTag.setResult(crashAnalyzer.getCrashCount() +
 				// " Crash");
 			}
 			if (TestInvocation.DEVICE_LOG_NAME.equals(dataName)) {
-				mLogPath = logFile.getAbsolutePath();
+				mLogPath = logFile.getName();
 				if (mPackage == null) {
-					monkeyTag.setFinalLog(logFile.getAbsolutePath());
 					setAndAnalyzeLog(logFile);
 				}
 			}
@@ -304,15 +303,19 @@ public class CtsXmlResultReporter implements ITestInvocationListener {
 		}
 	}
 
-	private void setAndAnalyzeLog(File logFile) {
+	private void setAndAnalyzeLog(File logFile) throws IOException {
+		monkeyTag.setFinalLog(logFile.getName());
+		// 移动
+		// FileUtil.copyFileToDir(logFile, mReportDir);
 		CrashAnalyzer crashAnalyzer = new CrashAnalyzer(logFile);
 		crashAnalyzer.parserLogcat();
 		if (crashAnalyzer.hasCrash()) {
 			mResults.setHasCrash("YES");
-			mResults.setCrashFile(crashAnalyzer.getmCrashFile()
-					.getAbsolutePath());
+			// FileUtil.copyFileToDir(crashAnalyzer.getmCrashFile(),
+			// mReportDir);
 			mResults.setResult(crashAnalyzer.getCrashCount() + " Crash.");
 		}
+		mResults.setCrashFile(crashAnalyzer.getmCrashFile().getName());
 	}
 
 	/**
@@ -443,27 +446,43 @@ public class CtsXmlResultReporter implements ITestInvocationListener {
 
 		try {
 			mReporter.reportResult(reportFile);
+			createReporter(reportFile);
 		} catch (IOException e) {
 			CLog.e(e);
 		}
 
-		createReporter(reportFile);
 	}
 
-	private void createReporter(File xmlFile) {
+	private void createReporter(File xmlFile) throws IOException {
 		MonkeyReporter reporter = null;
 		if (mReportPath == null) {
-			reporter = new MonkeyReporter(xmlFile);
+			reporter = new MonkeyReporter(xmlFile, mLogDir);
 		} else {
-			reporter = new MonkeyReporter(xmlFile, new File(mReportPath));
+			reporter = new MonkeyReporter(xmlFile, new File(mReportPath),
+					mLogDir);
 			generateMonkeyReslutTxt(reporter);
 		}
+
 		reporter.createReporter();
+
 		try {
 			reporter.drawImage();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		// 最后一张截图
+		FileUtil.copyFileToDir(new File(mLogDir, monkeyTag.getFinalPng()),
+				reporter.getReporterDir());
+		// 全log文件
+		FileUtil.copyFileToDir(new File(mLogDir, monkeyTag.getFinalLog()),
+				reporter.getReporterDir());
+
+		// crash文件
+		File crashFile = new File(mLogDir, mResults.getCrashFile());
+		if (crashFile.exists()) {
+			FileUtil.copyFileToDir(new File(mLogDir, mResults.getCrashFile()),
+					reporter.getReporterDir());
 		}
 	}
 
@@ -472,7 +491,8 @@ public class CtsXmlResultReporter implements ITestInvocationListener {
 			return;
 		}
 		File monkeyResult = new File(mMonkeyResultPath);
-		String url = mWSRPATH + "/" + reporter.getmDir();
+		String url = mWSRPATH + File.separator + reporter.getmDir()
+				+ File.separator + "index.html";
 		try {
 			if (!monkeyResult.exists()) {
 				monkeyResult.createNewFile();
@@ -632,7 +652,7 @@ public class CtsXmlResultReporter implements ITestInvocationListener {
 	 * Exposed so unit tests can mock.
 	 */
 	String getTimestamp() {
-		return TimeUtil.getTimestamp();
+		return TimeUtil.formatTimeStamp(System.currentTimeMillis());
 	}
 
 	/**
@@ -703,7 +723,7 @@ public class CtsXmlResultReporter implements ITestInvocationListener {
 			break;
 		}
 		if (mPngFile != null)
-			mEventTag.setImage(mPngFile.getPath());
+			mEventTag.setImage(mPngFile.getName());
 		mEventTag.setTime(getTimestamp());
 		monkeyTag.addEvent(mEventTag);
 

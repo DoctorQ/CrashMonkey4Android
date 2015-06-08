@@ -38,6 +38,14 @@ import com.android.tradefed.util.xml.AbstractXmlParser.ParseException;
 
 public class MonkeyReporter extends AbstractXmlPullParser {
 		
+	public File getReporterDir() {
+		return reporterDir;
+	}
+
+	public void setReporterDir(File reporterDir) {
+		this.reporterDir = reporterDir;
+	}
+
 	public String getmDir() {
 		return mDir;
 	}
@@ -45,7 +53,7 @@ public class MonkeyReporter extends AbstractXmlPullParser {
 	public void setmDir(String mDir) {
 		this.mDir = mDir;
 	}
-
+	
 	private static final String LOG_TAG = "MonkeyReporter";
 
 	private static final String[] MONKEY_RESULT_RESOURCES = { "index.xsl",
@@ -55,11 +63,12 @@ public class MonkeyReporter extends AbstractXmlPullParser {
 	// 存放目录
 	private File mSaveFile = null;
 	private File mXmlFile = null;
+	private File mLogDir = null;
 	// 报告目录位于存放目录下
 	private File reporterDir = null;
 	private String mDir = null;
 
-	public MonkeyReporter(File xmlFile, File saveFile) {
+	public MonkeyReporter(File xmlFile, File saveFile, File logDir) {
 		this.mXmlFile = xmlFile;
 
 		if (!saveFile.exists()) {
@@ -67,6 +76,7 @@ public class MonkeyReporter extends AbstractXmlPullParser {
 					"report path :%s not exists", saveFile.getAbsolutePath()));
 		}
 		mDir = TimeUtil.getResultTimestamp();
+		mLogDir = logDir;
 		mSaveFile = new File(saveFile, mDir);
 		mSaveFile.mkdir();
 		if (mXmlFile == null || !mXmlFile.exists())
@@ -76,11 +86,12 @@ public class MonkeyReporter extends AbstractXmlPullParser {
 	}
 	
 	// 如果只传xml文件路径，那么保存的目录就在xml同级目录
-	public MonkeyReporter(File xmlFile) {
+	public MonkeyReporter(File xmlFile, File logDir) {
 		this.mXmlFile = xmlFile;
 		if (mXmlFile == null || !mXmlFile.exists())
 			return;
 		this.mSaveFile = mXmlFile.getParentFile();
+		mLogDir = logDir;
 		init();
 	}
 
@@ -155,7 +166,8 @@ public class MonkeyReporter extends AbstractXmlPullParser {
 	public void drawImage() throws IOException {
 		ImageProcessing image = new ImageProcessing();
 		for (EventTag eventTag : items) {
-			File imageFile = new File(eventTag.getImage());
+			File imageFile = new File(mLogDir,eventTag.getImage());
+			File saveTo = new File(reporterDir,imageFile.getName());
 			image.open(imageFile);
 			if (eventTag instanceof TapTag) {
 				drawCircle(image, eventTag);
@@ -165,7 +177,12 @@ public class MonkeyReporter extends AbstractXmlPullParser {
 			} else if (eventTag instanceof KeyTag) {
 				drawText(image, eventTag);
 			}
-			image.save(imageFile);
+			image.save(saveTo);
+			
+			
+			//copy log文件
+			File logFile = new File(mLogDir,eventTag.getLog());
+			FileUtil.copyFile(logFile, new File(reporterDir,logFile.getName()));
 
 		}
 	}

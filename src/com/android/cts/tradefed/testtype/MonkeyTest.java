@@ -402,7 +402,7 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 					getDevice().getSerialNumber());
 			return;
 		}
-		CLog.i("Open monkey logcat for %s, ", getDevice().getSerialNumber());
+		CLog.i("Open monkey logcat for %s .", getDevice().getSerialNumber());
 		mLogcatReceiver = createMonkeyLogcatReceiver();
 		mLogcatReceiver.start();
 	}
