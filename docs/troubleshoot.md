@@ -19,8 +19,8 @@ Using commandline arguments as starting command: [run, cts, --plan, Monkey, -v, 
 
 ```
 
-在Mac环境下会遇到这种问题，搜索后发现是Mac版的IDE的bug，所以如果想解决这个问题，需要将tradefederation项目中的DeviceManager.java项目中adb修改为你的sdk全目录就可以了.
+在Mac环境下会遇到这种问题，需要使用shell脚本启动命令行,eclipse自带的一个名为eclipse的脚本可以启动,然后就可以识别了.
 
-![这里写图片描述](http://img.blog.csdn.net/20150605111248611)
+
 
 
