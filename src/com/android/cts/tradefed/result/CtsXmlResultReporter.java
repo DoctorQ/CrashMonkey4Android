@@ -472,12 +472,15 @@ public class CtsXmlResultReporter implements ITestInvocationListener {
 			e.printStackTrace();
 		}
 		// 最后一张截图
-		FileUtil.copyFileToDir(new File(mLogDir, monkeyTag.getFinalPng()),
-				reporter.getReporterDir());
+		File finalFIle = new File(mLogDir, monkeyTag.getFinalPng());
+		if (finalFIle.exists()) {
+			FileUtil.copyFileToDir(finalFIle, reporter.getReporterDir());
+		}
 		// 全log文件
-		FileUtil.copyFileToDir(new File(mLogDir, monkeyTag.getFinalLog()),
-				reporter.getReporterDir());
-
+		File finalLog = new File(mLogDir, monkeyTag.getFinalLog());
+		if (finalLog.exists()) {
+			FileUtil.copyFileToDir(finalLog, reporter.getReporterDir());
+		}
 		// crash文件
 		File crashFile = new File(mLogDir, mResults.getCrashFile());
 		if (crashFile.exists()) {
@@ -728,8 +731,8 @@ public class CtsXmlResultReporter implements ITestInvocationListener {
 		monkeyTag.addEvent(mEventTag);
 
 	}
-	
-	public int getStatusBarHeight(){
+
+	public int getStatusBarHeight() {
 		return mResults.getStatusBarHeight();
 	}
 

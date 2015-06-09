@@ -78,7 +78,6 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 	@Option(name = "app-path", description = "local app's path")
 	private String mAppPath = null;
 
-	
 	@Option(name = "wifiSsdk", description = "wifi username")
 	private String mWifiSSID = null;
 	@Option(name = "wifiPsk", description = "wifi password")
@@ -144,7 +143,7 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 		beforeTest(listener);
 
 		float[] mFactors = parseFactors();
-		
+
 		try {
 			Monkey monkey = new Monkey(mPackage, getChimpDevice(), mFactors);
 			monkey.setY(ctsXmlResultReporter.getStatusBarHeight());
@@ -158,6 +157,7 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 			e.printStackTrace();
 		} finally {
 			exitAdbChimpDevice();
+			destoryListener();
 		}
 		afterTest();
 	}
@@ -196,10 +196,14 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 	}
 
 	private void destoryListener() {
-		if (monkeyNetWorkListener != null)
+		if (monkeyNetWorkListener != null) {
 			monkeyNetWorkListener.setRunning(false);
-		if (monkeyActivityListener != null)
+			monkeyNetWorkListener = null;
+		}
+		if (monkeyActivityListener != null) {
 			monkeyActivityListener.setRunning(false);
+			monkeyActivityListener = null;
+		}
 
 	}
 
