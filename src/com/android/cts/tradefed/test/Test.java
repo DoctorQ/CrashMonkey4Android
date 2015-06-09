@@ -46,7 +46,7 @@ public class Test extends TestCase {
 	}
 
 	public void test_math() {
-		double count = Math.pow(2, 4) * Math.pow(10, 10);
+		int count = (int)Float.parseFloat("48.0");
 		System.out.println(count);
 	}
 

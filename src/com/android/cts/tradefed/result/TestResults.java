@@ -276,5 +276,10 @@ class TestResults extends AbstractXmlPullParser {
 	public void setMonkeyTag(MonkeyTestTag monkeyTag) {
 		this.monkeyTag = monkeyTag;
 	}
+	
+	public int getStatusBarHeight(){
+		String height = mDeviceInfo.getStatusBarHeight();
+		return (int)Float.parseFloat("48.0");
+	}
 
 }

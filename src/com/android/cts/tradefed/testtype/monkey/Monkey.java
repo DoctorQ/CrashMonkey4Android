@@ -42,6 +42,10 @@ public class Monkey {
 		}
 
 	}
+	
+	public void setY(int y){
+		mRectangle.setY(y);
+	}
 
 	/**
 	 * Initiate the monkey

@@ -144,8 +144,10 @@ public class MonkeyTest implements IDeviceTest, IResumableTest, IBuildReceiver {
 		beforeTest(listener);
 
 		float[] mFactors = parseFactors();
+		
 		try {
 			Monkey monkey = new Monkey(mPackage, getChimpDevice(), mFactors);
+			monkey.setY(ctsXmlResultReporter.getStatusBarHeight());
 			for (int i = 0; i < mInjectEvents; i++) {
 				saveScreenshot(RUNNINT_SCREENSHOT);
 				monkey.nextRandomEvent(ctsXmlResultReporter);

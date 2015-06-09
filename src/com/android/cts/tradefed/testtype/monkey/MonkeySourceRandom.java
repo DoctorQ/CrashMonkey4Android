@@ -251,8 +251,8 @@ public class MonkeySourceRandom implements MonkeyEventSource {
 		Point newPoint = new Point();
 
 		CLog.d(String.format("(%s,%s)", x, y));
-		newPoint.x = Math.max(Math.min(point.x + x, display.getWidth()), 0);
-		newPoint.y = Math.max(Math.min(point.y + y, display.getHeight()), 0);
+		newPoint.x = Math.max(Math.min(point.x + x, display.getWidth()), display.getX());
+		newPoint.y = Math.max(Math.min(point.y + y, display.getHeight()), display.getY());
 		return newPoint;
 	}
 

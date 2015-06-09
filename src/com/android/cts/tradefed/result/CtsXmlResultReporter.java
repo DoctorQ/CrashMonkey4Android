@@ -728,5 +728,9 @@ public class CtsXmlResultReporter implements ITestInvocationListener {
 		monkeyTag.addEvent(mEventTag);
 
 	}
+	
+	public int getStatusBarHeight(){
+		return mResults.getStatusBarHeight();
+	}
 
 }

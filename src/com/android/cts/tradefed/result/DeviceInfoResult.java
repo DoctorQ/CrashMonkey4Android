@@ -37,11 +37,20 @@ import java.util.Set;
  * when multiple devices are used to generate the report.
  */
 class DeviceInfoResult extends AbstractXmlPullParser {
-    static final String TAG = "DeviceInfo";
+    public String getStatusBarHeight() {
+		return statusBarHeight;
+	}
+
+	public void setStatusBarHeight(String statusBarHeight) {
+		this.statusBarHeight = statusBarHeight;
+	}
+
+	static final String TAG = "DeviceInfo";
     private static final String ns = CtsXmlResultReporter.ns;
     static final String BUILD_TAG = "BuildInfo";
     private static final String PHONE_TAG = "PhoneSubInfo";
     private static final String SCREEN_TAG = "Screen";
+    public static final String STATUSBAR_HEIGHT = "statusbar_height";
 
     private static final String FEATURE_INFO_TAG = "FeatureInfo";
     private static final String FEATURE_TAG = "Feature";
@@ -63,6 +72,9 @@ class DeviceInfoResult extends AbstractXmlPullParser {
     private static final String PROCESS_ATTR_DELIM = ":";
 
     private Map<String, String> mMetrics = new HashMap<String, String>();
+    private String statusBarHeight;
+    
+    
 
     /**
      * Serialize this object and all its contents to XML.
@@ -86,6 +98,9 @@ class DeviceInfoResult extends AbstractXmlPullParser {
                     getMetric(metricsCopy, DeviceInfoConstants.SCREEN_DENSITY_BUCKET));
             serializer.attribute(ns, DeviceInfoConstants.SCREEN_SIZE,
                     getMetric(metricsCopy, DeviceInfoConstants.SCREEN_SIZE));
+            serializer.attribute(ns, STATUSBAR_HEIGHT,
+                    getMetric(metricsCopy, STATUSBAR_HEIGHT));
+            setStatusBarHeight(getMetric(metricsCopy, STATUSBAR_HEIGHT));
             serializer.endTag(ns, SCREEN_TAG);
 
             serializer.startTag(ns, PHONE_TAG);
