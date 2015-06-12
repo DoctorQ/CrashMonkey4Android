@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="res"/>
+	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="libs/hosttestlib.jar"/>
@@ -15,6 +15,7 @@
 	<classpathentry kind="lib" path="libs/gson-2.2.4.jar"/>
 	<classpathentry kind="lib" path="libs/guava-17.0.jar"/>
 	<classpathentry kind="lib" path="libs/kxml2-2.3.0.jar"/>
-	<classpathentry kind="lib" path="libs/tradefederation.jar"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/tradefederation"/>
+	<classpathentry exported="true" kind="lib" path="libs/tradefederation.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -16,13 +16,7 @@
 -->
 <configuration description="Runs a CTS plan from a pre-existing CTS installation" >
 
-    <option
-        name="wifiSsdk"
-        value="58-guest" />
-
-    <option
-        name="wifiPsk"
-        value="58shenqi" />
+   
 
    <!--  <option
         name="p"
