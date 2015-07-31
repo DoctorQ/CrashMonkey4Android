@@ -16,16 +16,6 @@
 -->
 <configuration description="Runs a CTS plan from a pre-existing CTS installation" >
 
-   
-
-   <!--  <option
-        name="p"
-        value="com.wuba" />
-
-    <option
-        name="a"
-        value="com.wuba.activity.launch.LaunchActivity" />
- -->
     <option
         name="v"
         value="20" />
